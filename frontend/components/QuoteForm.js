@@ -1,4 +1,6 @@
-import React, { useReducer } from 'react'
+import React, { useReducer } from 'react';
+import { useDispatch } from 'react-redux';
+import { createQuote } from '../state/quotesSlice';
 
 const CHANGE_INPUT = 'CHANGE_INPUT'
 const RESET_FORM = 'RESET_FORM'
@@ -6,35 +8,39 @@ const RESET_FORM = 'RESET_FORM'
 const initialState = {
   authorName: '',
   quoteText: '',
-}
+};
 
 const reducer = (state, action) => {
   switch (action.type) {
     case CHANGE_INPUT: {
       const { name, value } = action.payload
-      return { ...state, [name]: value }
+      return { ...state, [name]: value };
     }
     case RESET_FORM:
-      return { authorName: '', quoteText: '' }
+      return { authorName: '', quoteText: '' };
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default function TodoForm() {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatchLocal] = useReducer(reducer, initialState);
+  const dispatch = useDispatch();
 
   const onChange = ({ target: { name, value } }) => {
-    dispatch({ type: CHANGE_INPUT, payload: { name, value } })
-  }
+    dispatchLocal({ type: CHANGE_INPUT, payload: { name, value } })
+  };
   const resetForm = () => {
-    dispatch({ type: RESET_FORM })
-  }
+    dispatchLocal({ type: RESET_FORM })
+  };
   const onNewQuote = evt => {
-    evt.preventDefault()
-    // ✨ dispatch creation of a new quote here, using the values from the form
-    resetForm()
-  }
+    evt.preventDefault();
+    dispatch(createQuote({
+      authorName: state.authorName,
+      quoteText: state.quoteText,
+    }));
+    resetForm();
+  };
 
   return (
     <form id="quoteForm" onSubmit={onNewQuote}>
@@ -64,5 +70,5 @@ export default function TodoForm() {
         >DO IT!</button>
       </label>
     </form>
-  )
+  );
 }

@@ -1,14 +1,14 @@
 import React from 'react'
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteQuote, setHighlightedQuote, editQuoteAuthenticity, toggleVisibility } from '../state/quotesSlice';
 
 export default function Quotes() {
-  const quotes = [{ // ✨ `quotes` must come from the Redux store
-    id: 3,
-    quoteText: "Be yourself; everyone else is already taken.",
-    authorName: "Oscar Wilde",
-    apocryphal: false,
-  }]
-  const displayAllQuotes = true // ✨ `displayAllQuotes` must come from the Redux store
-  const highlightedQuote = 3 // ✨ `highlightedQuote` must come from the Redux store
+  const dispatch = useDispatch();
+
+
+  const quotes = useSelector(state => state.quotes.quotes);
+  const displayAllQuotes = useSelector(state => state.quotes.displayAllQuotes);
+  const highlightedQuote = useSelector(state => state.quotes.highlightedQuote);
 
   return (
     <div id="quotes">
@@ -17,7 +17,7 @@ export default function Quotes() {
         {
           quotes
             ?.filter(qt => {
-              return displayAllQuotes || !qt.apocryphal
+              return displayAllQuotes || !qt.apocryphal;
             })
             .map(qt => (
               <div
@@ -27,9 +27,9 @@ export default function Quotes() {
                 <div>{qt.quoteText}</div>
                 <div>{qt.authorName}</div>
                 <div className="quote-buttons">
-                  <button onClick={() => {/* ✨ dispatch an action */ }}>DELETE</button>
-                  <button onClick={() => {/* ✨ dispatch an action */ }}>HIGHLIGHT</button>
-                  <button onClick={() => {/* ✨ dispatch an action */ }}>FAKE</button>
+                  <button onClick={() => dispatch(deleteQuote(qt.id))}>DELETE</button>
+                  <button onClick={() => dispatch(setHighlightedQuote(qt.id))}>HIGHLIGHT</button>
+                  <button onClick={() => dispatch(editQuoteAuthenticity(qt.id))}>FAKE</button>
                 </div>
               </div>
             ))
@@ -38,9 +38,9 @@ export default function Quotes() {
           !quotes?.length && "No quotes here! Go write some."
         }
       </div>
-      {!!quotes?.length && <button onClick={() => {/* ✨ dispatch an action */ }}>
+      {!!quotes?.length && <button onClick={() => dispatch(toggleVisibility())}>
         {displayAllQuotes ? 'HIDE' : 'SHOW'} FAKE QUOTES
       </button>}
     </div>
-  )
+  );
 }
